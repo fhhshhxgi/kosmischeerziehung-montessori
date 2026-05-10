@@ -86,8 +86,8 @@ const NARRATIVES = [
     id: 'universe',
     title: 'Die Entstehung des Universums',
     icon: <Sparkles className="w-8 h-8" />,
-    image: 'https://images.unsplash.com/photo-1464802686167-b939a67a06a1?auto=format&fit=crop&q=80&w=800',
-    description: 'Das „Gottesdrama“: Aus dem Chaos entsteht Ordnung durch physikalische Gesetze. Explosionen von Sternen schaffen schwere Elemente, die Grundlage für Planeten und Leben.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Messier-42-10.12.2004-filtered.jpeg',
+    description: 'Aus dem Chaos entsteht Ordnung durch physikalische Gesetze. Explosionen von Sternen schaffen schwere Elemente, die Grundlage für Planeten und Leben.',
     details: 'Maria Montessori erzählte dies als ein großes Wunder, bei dem jeder Partikel seinem Gesetz folgt.'
   },
   {
@@ -125,10 +125,10 @@ const NARRATIVES = [
 ];
 
 const GOALS = [
-  { icon: <Heart className="text-red-500" />, title: 'Verantwortung', desc: 'Sich als Teil eines Ganzen begreifen.' },
+  { icon: <Heart className="text-red-500" />, title: 'Ver\u00adant\u00adwor\u00adtung', desc: 'Sich als Teil eines Ganzen begreifen.' },
   { icon: <HandHeart className="text-blue-500" />, title: 'Frieden', desc: 'Verständnis für andere Völker und Kulturen.' },
-  { icon: <Lightbulb className="text-amber-500" />, title: 'Selbstständigkeit', desc: 'Eigene Fragen stellen und Antworten finden.' },
-  { icon: <Compass className="text-emerald-500" />, title: 'Ganzheitliches Denken', desc: 'Zusammenhänge über Fächergrenzen hinweg sehen.' },
+  { icon: <Lightbulb className="text-amber-500" />, title: 'Selbst\u00adstän\u00addig\u00adkeit', desc: 'Eigene Fragen stellen und Antworten finden.' },
+  { icon: <Compass className="text-emerald-500" />, title: 'Ganz\u00adheit\u00adlich\u00ades Den\u00adken', desc: 'Zusammenhänge über Fächergrenzen hinweg sehen.' },
   { icon: <Star className="text-yellow-500" />, title: 'Respekt', desc: 'Ehrfurcht vor der Schöpfung und dem Leben.' },
 ];
 
@@ -161,10 +161,9 @@ const QUIZ = [
 ];
 
 const GLOSSARY = [
-  { term: 'Große Erzählungen', definition: 'Mythenhafte Rahmenerzählungen, die das Interesse des Kindes an den großen Zusammenhängen der Welt wecken.' },
+  { term: 'Große Erzählungen', definition: 'Mythenhafte Erzählungen, die das Interesse des Kindes an den großen Zusammenhängen der Welt wecken.' },
   { term: 'Interdependenz', definition: 'Die wechselseitige Abhängigkeit aller Dinge im Universum voneinander.' },
-  { term: 'Kosmische Aufgabe', definition: 'Die Funktion, die jedes Element (belebt oder unbelebt) im großen Haushalt der Natur erfüllt, um das Gleichgewicht zu halten.' },
-  { term: 'Kosmische Erziehung', definition: 'Der ganzheitliche Bildungsplan Montessoris für das 6- bis 12-jährige Kind, der alle Wissensgebiete miteinander vernetzt.' },
+  { term: 'Kosmische Aufgabe', definition: 'Die Funktion, die jedes Element (lebend oder nicht lebend) im großen Haushalt der Natur erfüllt, um das Gleichgewicht zu halten.' },
   { term: 'Polarisation der Aufmerksamkeit', definition: 'Der Zustand tiefer, ungestörter Konzentration, in den ein Kind bei einer sinnvollen Tätigkeit versinkt.' },
   { term: 'Vorbereitete Umgebung', definition: 'Ein speziell gestalteter Raum, der dem Kind ermöglicht, autonom und seinen Bedürfnissen entsprechend zu lernen.' },
 ];
@@ -177,7 +176,57 @@ const COSMIC_TIMELINE = [
   { year: 'Vor 200.000 Jahren', title: 'Der Mensch', desc: 'Homo Sapiens erscheint und beginnt, den Kosmos durch Vernunft und Herz zu begreifen.' },
 ];
 
+// --- Hooks ---
+
+const useOrientation = () => {
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      // Only show recommendation on tablets and mobiles (typical touch devices)
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      setIsPortrait(isTouch && window.innerHeight > window.innerWidth);
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
+
+  return isPortrait;
+};
+
 // --- Components ---
+
+const OrientationOverlay = () => {
+  const isPortrait = useOrientation();
+
+  return (
+    <AnimatePresence>
+      {isPortrait && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[1000] bg-brand-blue flex flex-col items-center justify-center text-center p-10 backdrop-blur-2xl"
+        >
+          <motion.div
+            animate={{ rotate: [0, 90, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mb-10 text-brand-gold"
+          >
+            <Globe size={80} />
+          </motion.div>
+          <h2 className="text-3xl font-display font-bold text-white mb-6 uppercase tracking-tighter">Das Ganze im Blick</h2>
+          <p className="text-slate-300 text-lg max-w-xs mx-auto font-light leading-relaxed italic">
+            Bitte drehe dein Gerät in das <span className="text-brand-gold font-medium">Querformat</span>, um die volle Vision des Universums zu erleben.
+          </p>
+          <div className="mt-12 h-px w-20 bg-brand-gold/30 mx-auto" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const SectionTitle = ({ children, subtitle }: { children: React.ReactNode, subtitle?: string }) => (
   <div className="mb-20 text-center relative">
@@ -192,7 +241,7 @@ const SectionTitle = ({ children, subtitle }: { children: React.ReactNode, subti
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="text-5xl md:text-8xl font-display font-bold text-brand-blue mb-8 tracking-tighter leading-none"
+      className="text-5xl md:text-6xl lg:text-8xl font-display font-bold text-brand-blue mb-8 tracking-tighter leading-[1.1]"
     >
       {children}
     </motion.h2>
@@ -324,12 +373,12 @@ const StarField = () => {
   const [nebulae, setNebulae] = useState<{ id: number, x: number, y: number, size: number, color: string }[]>([]);
 
   useEffect(() => {
-    setStars(Array.from({ length: 150 }).map((_, i) => ({
+    setStars(Array.from({ length: 80 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.7 + 0.3,
+      size: Math.random() * 1.5 + 0.5,
+      opacity: Math.random() * 0.5 + 0.3,
       duration: `${Math.random() * 5 + 3}s`
     })));
 
@@ -391,13 +440,13 @@ const UniverseTimeline = () => {
           <div className="h-px w-12 bg-brand-gold" />
           <span className="text-brand-gold font-bold uppercase tracking-[0.4em] text-xs">Chronik der Schöpfung</span>
         </div>
-        <h2 className="text-5xl md:text-7xl font-display font-bold text-white tracking-tighter">Die Große <br /><span className="text-brand-gold italic">Zeitleiste</span></h2>
+        <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white tracking-tighter">Die Große <br /><span className="text-brand-gold italic">Zeitleiste</span></h2>
       </div>
 
       <div className="relative">
         <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-gold/30 to-transparent z-0" />
         
-        <div className="flex overflow-x-auto gap-12 px-[10vw] pb-20 no-scrollbar cursor-grab active:cursor-grabbing snap-x">
+        <div className="flex overflow-x-auto gap-12 px-[10vw] pt-10 pb-20 no-scrollbar cursor-grab active:cursor-grabbing snap-x">
           {COSMIC_TIMELINE.map((item, i) => (
             <motion.div
               key={i}
@@ -518,6 +567,7 @@ export default function App() {
   const [quizFinished, setQuizFinished] = useState(false);
   const [selectedPractice, setSelectedPractice] = useState<typeof PRAXIS[0] | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [legalModal, setLegalModal] = useState<'impressum' | 'datenschutz' | null>(null);
 
   const heroRef = useRef(null);
   const quoteRef = useRef(null);
@@ -578,7 +628,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-beige">
+    <div className="min-h-screen bg-brand-beige selection:bg-brand-gold/30">
+      <OrientationOverlay />
       <FloatingParticles />
       {/* Scroll Progress Bar */}
       <motion.div
@@ -587,16 +638,16 @@ export default function App() {
       />
       
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-8 pointer-events-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-6 md:py-6 lg:py-8 pointer-events-none">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="max-w-7xl mx-auto flex items-center justify-between glass px-8 h-20 rounded-full border-white/20 pointer-events-auto"
+          className="max-w-7xl mx-auto flex items-center justify-between glass px-4 md:px-8 h-16 md:h-20 rounded-full border-white/20 pointer-events-auto"
         >
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollTo('hero')}>
+          <div className="flex items-center gap-2 md:gap-3 cursor-pointer group" onClick={() => scrollTo('hero')}>
             <div className="relative">
               <Tooltip text="Zurück zum Start">
-                <Globe className="text-brand-gold w-10 h-10 transition-transform duration-700 group-hover:rotate-180" />
+                <Globe className="text-brand-gold w-8 h-8 md:w-10 md:h-10 transition-transform duration-700 group-hover:rotate-180" />
               </Tooltip>
               <motion.div 
                 animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} 
@@ -605,8 +656,12 @@ export default function App() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-bold text-2xl tracking-tighter text-brand-blue uppercase leading-none">Kosmos</span>
-              <span className="text-[8px] font-bold tracking-[0.3em] text-brand-gold uppercase leading-none mt-1">Montessori</span>
+              <span className="font-display font-medium text-lg md:text-xl tracking-[0.2em] text-brand-blue uppercase leading-tight">Kosmische</span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="font-display font-black text-[10px] md:text-xs tracking-tighter text-brand-blue uppercase leading-tight">Erziehung</span>
+                <div className="h-px w-4 bg-brand-gold/30" />
+                <span className="text-[7px] font-bold tracking-[0.3em] text-brand-gold uppercase leading-none">Montessori</span>
+              </div>
             </div>
           </div>
           
@@ -665,116 +720,70 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <header id="hero" ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-blue">
+      <header id="hero" ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden bg-brand-blue">
         <div className="absolute inset-0 z-0">
           <StarField />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,25,47,1)_95%)]" />
+          
+          {/* Subtle Organic Background Elements */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] border border-brand-gold/5 rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] border border-brand-gold/5 rounded-full pointer-events-none opacity-50" />
         </div>
         
-        {/* Cinematic Celestial Body */}
-        <motion.div 
-          style={{ 
-            opacity: heroOpacity,
-            scale: heroScale,
-            rotate: useTransform(heroScrollY, [0, 1], [0, 20])
-          }}
-          className="absolute right-[-10%] top-[-10%] w-[80vw] h-[80vw] md:w-[60vw] md:h-[60vw] z-10 pointer-events-none"
-        >
-          <div className="absolute inset-0 bg-brand-gold/10 rounded-full blur-[100px] animate-pulse" />
-          <motion.img 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 200, repeat: Infinity, ease: 'linear' }}
-            src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=2000" 
-            className="w-full h-full object-cover rounded-full opacity-40 mix-blend-screen shadow-[0_0_100px_rgba(197,160,89,0.2)]"
-            alt="Rotating Planet"
-          />
-        </motion.div>
-
         <div className="relative z-20 text-center px-6 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-center justify-center gap-4 mb-12">
-              <div className="h-px w-16 bg-brand-gold/50" />
-              <span className="text-brand-gold font-bold uppercase tracking-[0.6em] text-[10px]">Expedition ins Bewusstsein</span>
-              <div className="h-px w-16 bg-brand-gold/50" />
+            <div className="flex items-center justify-center gap-10 mb-8 opacity-40">
+              <div className="h-px w-24 bg-gradient-to-r from-transparent to-brand-gold" />
+              <Globe className="text-brand-gold w-6 h-6" />
+              <div className="h-px w-24 bg-gradient-to-l from-transparent to-brand-gold" />
             </div>
             
-            <h1 className="text-[14vw] md:text-[180px] font-display font-bold text-white mb-6 leading-[0.75] tracking-tighter relative">
+            <h1 className="flex flex-col items-center justify-center font-serif text-white mb-8 relative">
               <motion.span 
-                initial={{ y: 80, opacity: 0 }}
+                initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 1 }}
-                className="block drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                transition={{ delay: 0.2, duration: 1.2 }}
+                className="block text-[6vw] md:text-[4vw] lg:text-[60px] italic font-light tracking-wide opacity-60 mb-2"
               >
-                KOSMOS
+                Maria Montessoris
               </motion.span>
               <motion.span 
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="text-brand-gold italic font-serif text-3xl md:text-8xl tracking-normal mt-10 block"
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 1.2 }}
+                className="block text-[10vw] md:text-[8vw] lg:text-[120px] font-bold leading-none tracking-tight uppercase"
+              >
+                Kosmische Vision
+              </motion.span>
+              <motion.span 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
+                className="text-brand-gold text-lg md:text-2xl mt-12 block tracking-[0.6em] font-sans font-bold uppercase"
               >
                 Die Große Ordnung
               </motion.span>
             </h1>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="mt-20 flex flex-col items-center"
-            >
-              <div className="glass px-10 py-8 rounded-[40px] border-white/10 max-w-4xl backdrop-blur-xl mb-12">
-                <p className="text-xl md:text-3xl text-slate-200 font-light leading-relaxed">
-                  „Wir müssen dem Kind die Vision des <span className="text-white font-medium italic underline decoration-brand-gold/50 underline-offset-[12px]">ganzen Universums</span> schenken.“
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row items-center gap-8">
-                <button 
-                  onClick={() => scrollTo('narratives')}
-                  className="group relative px-16 py-8 bg-brand-gold text-white rounded-full font-bold text-xl overflow-hidden transition-all shadow-[0_20px_60px_-10px_rgba(197,160,89,0.4)] hover:-translate-y-2 active:scale-95"
-                >
-                  <span className="relative z-10 uppercase tracking-[0.4em] flex items-center gap-4">
-                    Zeitreise <ArrowRight className="w-6 h-6 group-hover:translate-x-3 transition-transform" />
-                  </span>
-                  <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 mix-blend-overlay" />
-                </button>
-                <button 
-                  onClick={() => scrollTo('concept')}
-                  className="px-12 py-8 border border-white/20 text-white rounded-full font-bold text-xl hover:bg-white/10 transition-all backdrop-blur-md uppercase tracking-widest hover:border-brand-gold/50"
-                >
-                  Das Konzept
-                </button>
-              </div>
-            </motion.div>
           </motion.div>
-        </div>
-
-        {/* HUD Elements */}
-        <div className="absolute left-10 bottom-10 hidden lg:block z-30">
-          <div className="font-mono text-[8px] text-white/30 space-y-2 uppercase tracking-widest">
-            <div>Sector: 4G-MNT</div>
-            <div>Phase: Development</div>
-            <div>Sync: 100%</div>
-          </div>
         </div>
 
         {/* Scroll Indicator */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20 pointer-events-none"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none"
         >
-          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-white/40">Scroll Down</span>
-          <div className="w-px h-32 bg-gradient-to-b from-brand-gold/60 to-transparent relative">
+          <span className="text-[9px] font-bold uppercase tracking-[0.5em] text-white/20">Explore</span>
+          <div className="w-[1px] h-16 bg-gradient-to-b from-brand-gold/40 to-transparent relative overflow-hidden">
             <motion.div 
-              animate={{ y: [0, 128, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-gold rounded-full shadow-[0_0_15px_#c5a059]"
+              animate={{ y: [-20, 64] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-transparent via-brand-gold to-transparent"
             />
           </div>
         </motion.div>
@@ -922,7 +931,7 @@ export default function App() {
         </div>
         
         <div className="max-w-7xl mx-auto relative">
-          <SectionTitle subtitle="Das Kind soll nicht nur isolierte Fakten lernen, sondern die tiefgehende Ordnung und Schönheit des Universums begreifen.">
+          <SectionTitle subtitle="Das Kind soll nicht nur isolierte Fakten lernen, sondern die Ordnung und Schönheit des Universums begreifen.">
             Das Netz des Lebens
           </SectionTitle>
 
@@ -1031,8 +1040,8 @@ export default function App() {
                   transition={{ delay: i * 0.1 }}
                   className="flex gap-6 p-6 rounded-3xl hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-slate-100"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-brand-gold flex items-center justify-center text-white font-bold">
-                    0{i+1}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-brand-gold/10 flex items-center justify-center text-brand-gold">
+                    <Sparkles size={20} />
                   </div>
                   <div>
                     <h4 className="text-xl font-bold text-brand-blue mb-2">{point.title}</h4>
@@ -1057,42 +1066,38 @@ export default function App() {
             >
               Die Kosmischen Mythen
             </motion.span>
-            <h2 className="text-5xl md:text-8xl font-display font-bold mb-8 tracking-tighter">Die Großen Erzählungen</h2>
+            <h2 className="text-5xl md:text-8xl font-display font-bold text-white mb-8 tracking-tighter">Die Großen Erzählungen</h2>
             <p className="text-slate-400 max-w-3xl mx-auto text-xl font-light leading-relaxed">
               Diese Mythen bilden den poetischen Rahmen der Kosmischen Erziehung. Sie wecken die Fantasie und stellen die großen Fragen nach dem Woher und Wohin.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-20">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-24">
             {NARRATIVES.map((n, i) => (
               <motion.button
                 key={n.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, duration: 0.8 }}
                 onClick={() => {
                   setActiveNarrative(n);
                   playSound('click', soundEnabled);
                 }}
-                className={`relative group aspect-[4/5] rounded-[32px] overflow-hidden transition-all duration-500 border-2 ${activeNarrative.id === n.id ? 'border-brand-gold scale-105 shadow-gold ring-4 ring-brand-gold/20' : 'border-white/10 opacity-40 hover:opacity-100 hover:scale-[1.02]'}`}
+                className={`relative group aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-700 ${activeNarrative.id === n.id ? 'scale-105 shadow-gold-soft' : 'opacity-30 hover:opacity-100'}`}
               >
-                <img src={n.image} alt={n.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" referrerPolicy="no-referrer" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-blue via-brand-blue/20 to-transparent flex flex-col items-center justify-end p-6 text-center">
-                  <motion.div 
-                    animate={activeNarrative.id === n.id 
-                      ? { scale: [1, 1.25, 1], rotate: [0, 5, -5, 0] } 
-                      : { scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }
-                    }
-                    transition={activeNarrative.id === n.id 
-                      ? { repeat: Infinity, duration: 2, ease: "easeInOut" } 
-                      : { repeat: Infinity, duration: 4, ease: "easeInOut" }
-                    }
-                    className="text-brand-gold mb-3"
-                  >
-                    {n.icon}
-                  </motion.div>
-                  <span className="text-sm font-bold uppercase tracking-widest leading-tight">{n.title}</span>
+                <div className={`absolute inset-0 z-10 transition-colors duration-700 ${activeNarrative.id === n.id ? 'bg-brand-gold/10' : 'bg-brand-blue/40 group-hover:bg-transparent'}`} />
+                <img 
+                  src={n.image} 
+                  alt={n.title} 
+                  className={`w-full h-full object-cover transition-all duration-1000 ${activeNarrative.id === n.id ? 'scale-110' : 'scale-100 grayscale group-hover:grayscale-0'}`} 
+                  referrerPolicy="no-referrer" 
+                />
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-end p-6 bg-gradient-to-t from-brand-blue/90 via-brand-blue/20 to-transparent">
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors duration-500 ${activeNarrative.id === n.id ? 'text-brand-gold' : 'text-white'}`}>
+                    {n.title}
+                  </span>
+                  <div className={`h-0.5 w-8 bg-brand-gold mt-2 transition-transform duration-500 origin-left ${activeNarrative.id === n.id ? 'scale-x-100' : 'scale-x-0'}`} />
                 </div>
               </motion.button>
             ))}
@@ -1101,46 +1106,45 @@ export default function App() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeNarrative.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-white/5 backdrop-blur-3xl rounded-[64px] border border-white/10 p-10 md:p-20 grid lg:grid-cols-2 gap-16 items-center shadow-2xl relative overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-brand-blue/40 rounded-[40px] border border-white/5 p-8 md:p-16 lg:p-24 grid lg:grid-cols-12 gap-12 lg:gap-20 items-center relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/10 rounded-full blur-[80px] -mr-32 -mt-32" />
-              <div className="relative z-10 order-2 lg:order-1">
-                {/* HUD Elements */}
-                <div className="flex items-center gap-6 mb-12">
-                  <div className="px-4 py-2 bg-brand-gold/20 rounded-full border border-brand-gold/30">
-                    <span className="text-brand-gold font-mono text-xs uppercase tracking-widest font-bold">Session Active</span>
-                  </div>
-                  <div className="h-px flex-grow bg-white/10" />
-                  <span className="text-brand-gold font-mono text-xs opacity-50 uppercase tracking-widest">Entry 0{NARRATIVES.indexOf(activeNarrative) + 1}</span>
-                </div>
-
-                <h3 className="text-5xl md:text-8xl font-display font-bold mb-10 leading-[0.8] tracking-tighter text-glow-gold">{activeNarrative.title}</h3>
-                <p className="text-2xl md:text-3xl text-slate-200 mb-12 leading-relaxed font-light">
+              <div className="lg:col-span-7 order-2 lg:order-1">
+                <h3 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium text-white mb-10 leading-tight tracking-tight">
+                  {activeNarrative.title}
+                </h3>
+                
+                <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed font-light font-sans max-w-2xl">
                   {activeNarrative.description}
                 </p>
-                <div className="bg-white/5 p-10 rounded-[48px] border border-white/10 backdrop-blur-3xl shadow-deep relative overflow-hidden group">
-                  <div className="absolute top-0 left-0 w-2 h-full bg-brand-gold opacity-30 group-hover:opacity-100 transition-opacity" />
-                  <p className="text-brand-gold/90 font-medium italic text-xl leading-relaxed ml-4">{activeNarrative.details}</p>
+
+                <div className="relative pl-8 border-l border-brand-gold/40 py-2">
+                  <p className="text-brand-gold font-serif italic text-xl md:text-2xl leading-relaxed">
+                    „{activeNarrative.details}“
+                  </p>
                 </div>
               </div>
-              <div className="relative z-10 order-1 lg:order-2">
+
+              <div className="lg:col-span-5 order-1 lg:order-2">
                 <motion.div 
-                  initial={{ rotate: 10, scale: 0.9 }}
-                  animate={{ rotate: 0, scale: 1 }}
-                  key={activeNarrative.id + "-img"}
-                  className="relative group"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  key={activeNarrative.id + "-img-detail"}
+                  className="relative"
                 >
-                  <div className="absolute -inset-4 bg-brand-gold/20 rounded-[48px] blur-2xl group-hover:bg-brand-gold/30 transition-all" />
-                  <img 
-                    src={activeNarrative.image} 
-                    alt={activeNarrative.title} 
-                    className="relative z-10 w-full aspect-square object-cover rounded-[48px] shadow-deep border border-white/20" 
-                    referrerPolicy="no-referrer"
-                  />
+                  <div className="absolute -inset-10 bg-brand-gold/5 rounded-full blur-[100px]" />
+                  <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                    <img 
+                      src={activeNarrative.image} 
+                      alt={activeNarrative.title} 
+                      className="w-full aspect-[4/5] object-cover bg-slate-900" 
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
@@ -1155,7 +1159,7 @@ export default function App() {
             Die Säulen der Vision
           </SectionTitle>
  
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-8 xl:gap-12">
             {GOALS.map((goal, i) => (
               <motion.div
                 key={i}
@@ -1163,18 +1167,18 @@ export default function App() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.8 }}
-                className="relative p-12 rounded-[64px] bg-white border border-slate-100 flex flex-col items-center text-center group hover:shadow-gold-soft hover:-translate-y-4 transition-all duration-700 overflow-hidden"
+                className="relative px-4 py-8 md:px-6 md:py-10 lg:p-10 xl:p-12 rounded-[32px] lg:rounded-[48px] xl:rounded-[64px] bg-white border border-slate-100 flex flex-col items-center text-center group hover:shadow-gold-soft hover:-translate-y-4 transition-all duration-700 overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-brand-gold/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
                 
-                <div className="relative mb-12">
+                <div className="relative mb-8 lg:mb-12">
                   <div className="absolute inset-0 bg-brand-gold/10 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 opacity-0 group-hover:opacity-40" />
-                  <div className="w-24 h-24 rounded-[32px] bg-slate-50 flex items-center justify-center text-5xl z-10 relative group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 transform group-hover:rotate-6">
+                  <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-[24px] lg:rounded-[32px] bg-slate-50 flex items-center justify-center text-3xl lg:text-5xl z-10 relative group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 transform group-hover:rotate-6">
                     {goal.icon}
                   </div>
                 </div>
 
-                <h4 className="text-2xl font-display font-bold text-brand-blue mb-6 tracking-tight group-hover:text-brand-gold transition-colors">
+                <h4 className="text-base md:text-lg lg:text-xl xl:text-2xl font-display font-bold text-brand-blue mb-4 lg:mb-6 tracking-tight group-hover:text-brand-gold transition-colors w-full leading-tight [hyphens:manual]" lang="de">
                   {goal.title}
                 </h4>
                 
@@ -1183,10 +1187,6 @@ export default function App() {
                 <p className="text-slate-500 text-lg leading-relaxed font-light italic">
                   {goal.desc}
                 </p>
-
-                <div className="mt-8 text-[10px] font-bold uppercase tracking-[0.6em] text-brand-gold opacity-20 group-hover:opacity-100 transition-opacity">
-                  VIRTUE 0{i + 1}
-                </div>
               </motion.div>
             ))}
           </div>
@@ -1208,7 +1208,7 @@ export default function App() {
                 In der Realität
               </motion.span>
               <h2 className="text-5xl md:text-7xl font-display font-bold text-brand-blue mb-6">Einblicke in die Praxis</h2>
-              <p className="text-xl text-slate-500 font-light leading-relaxed">Vom theoretischen Staunen zum konkreten Tun. Entdecken Sie, wie Montessori-Schüler die Welt erforschen.</p>
+              <p className="text-xl text-slate-500 font-light leading-relaxed">Vom theoretischen Staunen zum konkreten Tun. Entdecke, wie Montessori-Schüler die Welt erforschen.</p>
             </div>
             <div className="flex-shrink-0">
               <div className="px-8 py-4 bg-brand-blue text-white rounded-full text-sm font-bold uppercase tracking-widest shadow-deep">
@@ -1319,11 +1319,10 @@ export default function App() {
                   { t: 'Abstraktionsgrad', d: 'Einige Kinder benötigen direktere Anleitung, um die philosophischen Zusammenhänge nicht als bloße Mythen abzutun.' },
                   { t: 'Ressourcen', d: 'Die Qualität steht und fällt mit der Ausbildung der Begleiter und der Tiefe der vorbereiteten Umgebung.' }
                 ].map((item, i) => (
-                  <li key={i} className="flex gap-8 group/item">
-                    <div className="font-mono text-red-200 text-3xl font-bold leading-none opacity-40">0{i+1}</div>
+                  <li key={i} className="flex gap-6 group/item opacity-80 hover:opacity-100 transition-opacity">
                     <div>
-                      <h4 className="font-bold text-brand-blue mb-3 text-2xl group-hover/item:text-red-500 transition-colors">{item.t}</h4>
-                      <p className="text-slate-500 text-lg leading-relaxed font-light">{item.d}</p>
+                      <h4 className="font-bold text-brand-blue mb-2 text-xl group-hover/item:text-red-500 transition-colors uppercase tracking-wider">{item.t}</h4>
+                      <p className="text-slate-500 text-base leading-relaxed font-light">{item.d}</p>
                     </div>
                   </li>
                 ))}
@@ -1344,7 +1343,7 @@ export default function App() {
                 <div className="w-20 h-20 bg-white/5 text-brand-gold rounded-3xl flex items-center justify-center border border-white/10 shadow-sm backdrop-blur-xl">
                   <CheckCircle2 size={40} />
                 </div>
-                <h3 className="text-4xl font-display font-bold tracking-tight">Das Potenzial</h3>
+                <h3 className="text-4xl font-display font-bold text-white tracking-tight">Das Potenzial</h3>
               </div>
 
               <ul className="space-y-10 font-light">
@@ -1353,11 +1352,10 @@ export default function App() {
                   { t: 'Globale Ethik', d: 'Durch das Verständnis der Interdependenz wächst eine natürliche Verantwortung für die Erde und die Menschheit.' },
                   { t: 'Resilienz', d: 'Wer das Ganze versteht, kann besser mit den Teilproblemen der Welt umgehen und eigene Lösungen entwickeln.' }
                 ].map((item, i) => (
-                  <li key={i} className="flex gap-8 group/item">
-                    <div className="font-mono text-brand-gold text-3xl font-bold leading-none opacity-40">0{i+1}</div>
+                  <li key={i} className="flex gap-6 group/item opacity-80 hover:opacity-100 transition-opacity">
                     <div>
-                      <h4 className="font-bold mb-3 text-2xl group-hover/item:text-brand-gold transition-colors">{item.t}</h4>
-                      <p className="text-slate-300 text-lg leading-relaxed">{item.d}</p>
+                      <h4 className="font-bold text-white mb-2 text-xl group-hover/item:text-brand-gold transition-colors uppercase tracking-wider">{item.t}</h4>
+                      <p className="text-slate-300 text-base leading-relaxed font-light italic">{item.d}</p>
                     </div>
                   </li>
                 ))}
@@ -1400,7 +1398,7 @@ export default function App() {
                   </div>
                 </div>
                 
-                <h3 className="text-4xl md:text-5xl font-display font-bold text-brand-blue mb-12 leading-tight">
+                <h3 className="text-4xl md:text-5xl font-display font-bold text-white mb-12 leading-tight">
                   {QUIZ[quizIndex].question}
                 </h3>
 
@@ -1554,9 +1552,6 @@ export default function App() {
                   <p className="text-xl text-slate-500 leading-relaxed font-light italic">
                     {selectedPractice.detail}
                   </p>
-                  <p className="mt-8 text-slate-600 leading-relaxed">
-                    Diese Form der praktischen Arbeit ermöglicht es dem Kind, durch eigenes Handeln die tiefen Zusammenhänge des Kosmos zu erfassen und Verantwortung zu übernehmen.
-                  </p>
                 </div>
               </div>
             </motion.div>
@@ -1564,71 +1559,130 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Legal Modal */}
+      <AnimatePresence>
+        {legalModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-brand-blue/60 backdrop-blur-xl"
+            onClick={() => setLegalModal(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              className="bg-white rounded-[40px] max-w-xl w-full p-10 md:p-16 shadow-2xl relative"
+              onClick={e => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setLegalModal(null)}
+                className="absolute top-8 right-8 p-3 rounded-full bg-slate-50 text-brand-blue hover:bg-brand-gold hover:text-white transition-all shadow-sm"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="mb-10">
+                <span className="text-brand-gold font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">Rechtliche Informationen</span>
+                <h3 className="text-4xl font-display font-bold text-brand-blue">
+                  {legalModal === 'impressum' ? 'Impressum' : 'Datenschutz'}
+                </h3>
+              </div>
+
+              <div className="space-y-8 text-slate-600 leading-relaxed font-light">
+                {legalModal === 'impressum' ? (
+                  <>
+                    <div className="bg-slate-50 p-6 rounded-2xl">
+                      <h4 className="text-brand-blue font-bold uppercase tracking-widest text-xs mb-3">Haftungsausschluss</h4>
+                      <p className="text-sm">Diese Website ist ein rein schulisches Projekt und verfolgt keine kommerziellen Zwecke. Alle Inhalte dienen der pädagogischen Auseinandersetzung mit der Montessori-Theorie.</p>
+                    </div>
+                    <div>
+                      <h4 className="text-brand-blue font-bold uppercase tracking-widest text-xs mb-3">Verantwortlich für den Inhalt</h4>
+                      <div className="flex gap-12">
+                        <div>
+                          <p className="text-lg font-medium text-brand-blue leading-none">Cristan Liebrecht</p>
+                          <span className="text-xs text-slate-400">Autor</span>
+                        </div>
+                        <div>
+                          <p className="text-lg font-medium text-brand-blue leading-none">Stefan Liebrecht</p>
+                          <span className="text-xs text-slate-400">Co-Autor / Mentor</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-brand-blue font-bold uppercase tracking-widest text-xs mb-3">Entstehungsjahr</h4>
+                      <p className="text-lg">2026 — Projektarbeit / Pädagogik</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-start gap-4 bg-green-50 p-6 rounded-2xl border border-green-100">
+                      <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="text-green-800 font-bold uppercase tracking-widest text-xs mb-1">Privatsphäre garantiert</h4>
+                        <p className="text-green-700 text-sm">Deine Daten gehören dir. Wir fassen sie nicht an.</p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-brand-blue font-bold uppercase tracking-widest text-xs mb-3">Transparenz</h4>
+                      <p className="text-lg">Es findet <span className="font-medium text-brand-blue">keine Speicherung</span> von Nutzerdaten statt. Es werden keine Tracker, Cookies oder Analysetools von Drittanbietern verwendet.</p>
+                    </div>
+                    <div className="pt-4 border-t border-slate-100">
+                      <p className="text-sm italic">„Absolute Freiheit bedeutet auch absolute Freiheit von Überwachung.“</p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="mt-12 pt-8 border-t border-slate-100">
+                <button 
+                  onClick={() => setLegalModal(null)}
+                  className="w-full py-4 bg-brand-blue text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors"
+                >
+                  Schließen
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Footer */}
-      <footer className="py-24 px-6 md:px-12 bg-brand-blue text-white relative overflow-hidden">
+      <footer className="py-16 px-6 md:px-12 bg-brand-blue text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-gold/50 to-transparent" />
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-8 justify-center md:justify-start">
-                <Globe className="text-brand-gold w-12 h-12" />
-                <span className="font-display font-bold text-3xl tracking-tighter uppercase">Kosmos</span>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
+            <div>
+              <div className="flex items-center gap-3 mb-6 justify-center md:justify-start">
+                <Globe className="text-brand-gold w-8 h-8" />
+                <span className="font-display font-bold text-2xl tracking-tighter uppercase whitespace-nowrap">Kosmische Erziehung</span>
               </div>
-              <p className="text-slate-400 text-xl font-light leading-relaxed mb-10 max-w-md mx-auto md:mx-0 font-serif italic">
-                „Wir müssen das Kind als den Erzeuger des Menschen betrachten.“
+              <p className="text-slate-400 text-sm font-light max-w-sm leading-relaxed">
+                Ein Schulprojekt von <span className="text-white font-medium">Cristan Liebrecht</span> und <span className="text-white font-medium">Stefan Liebrecht</span>, erstellt im Jahr 2026.
               </p>
-              <div className="flex gap-4 justify-center md:justify-start">
-                {[
-                  { Icon: Github, label: 'GitHub' },
-                  { Icon: Twitter, label: 'Twitter' },
-                  { Icon: Mail, label: 'Kontakt' }
-                ].map(({ Icon, label }, i) => (
-                  <Tooltip key={i} text={label}>
-                    <motion.a
-                      whileHover={{ scale: 1.1, y: -5 }}
-                      href="#"
-                      className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-gold hover:border-brand-gold transition-all"
-                    >
-                      <Icon size={20} />
-                    </motion.a>
-                  </Tooltip>
-                ))}
-              </div>
             </div>
             
-            <div>
-              <h4 className="text-brand-gold font-bold uppercase tracking-[0.2em] text-xs mb-8">Navigation</h4>
-              <ul className="space-y-4">
-                {['Maria Montessori', 'Das Konzept', 'Die Erzählungen', 'Wissens-Check'].map((item, i) => (
-                  <li key={i}>
-                    <button 
-                      onClick={() => scrollTo(item === 'Maria Montessori' ? 'about' : item === 'Das Konzept' ? 'concept' : item === 'Die Erzählungen' ? 'narratives' : 'quiz')}
-                      className="text-slate-400 hover:text-white transition-colors text-lg font-light"
-                    >
-                      {item}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-brand-gold font-bold uppercase tracking-[0.2em] text-xs mb-8">Pädagogik-LK</h4>
-              <p className="text-slate-400 text-base leading-relaxed mb-6 font-light">
-                Diese Seite wurde als Bildungsmaterial für Oberstufenkurse erstellt. Alle Inhalte basieren auf der Montessori-Theorie.
-              </p>
-              <div className="flex items-center gap-3 justify-center md:justify-start py-4 px-6 bg-white/5 rounded-2xl border border-white/10">
-                <Info size={18} className="text-brand-gold" />
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-300">Bildungsprojekt 2026</span>
+            <div className="flex flex-col items-center md:items-end gap-6">
+              <div className="flex gap-8 text-xs uppercase tracking-[0.2em] font-bold">
+                <button 
+                  onClick={() => setLegalModal('impressum')}
+                  className="text-slate-400 hover:text-brand-gold transition-colors"
+                >
+                  Impressum
+                </button>
+                <button 
+                  onClick={() => setLegalModal('datenschutz')}
+                  className="text-slate-400 hover:text-brand-gold transition-colors"
+                >
+                  Datenschutz
+                </button>
               </div>
-            </div>
-          </div>
-          
-          <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-slate-500 uppercase tracking-[0.2em] font-medium">
-            <p>© 2024 Die Kosmische Vision – Alle Rechte vorbehalten.</p>
-            <div className="flex gap-8">
-              <a href="#" className="hover:text-brand-gold transition-colors">Impressum</a>
-              <a href="#" className="hover:text-brand-gold transition-colors">Datenschutz</a>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">
+                © 2026 — Alle Rechte vorbehalten.
+              </p>
             </div>
           </div>
         </div>
