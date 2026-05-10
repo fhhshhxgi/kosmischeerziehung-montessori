@@ -1606,7 +1606,7 @@ export default function App() {
                         </div>
                         <div>
                           <p className="text-lg font-medium text-brand-blue leading-none">Stefan Liebrecht</p>
-                          <span className="text-xs text-slate-400">Co-Autor / Mentor</span>
+                          <span className="text-xs text-slate-400">Autor</span>
                         </div>
                       </div>
                     </div>
