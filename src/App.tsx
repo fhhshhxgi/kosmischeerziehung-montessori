@@ -1398,7 +1398,7 @@ export default function App() {
                   </div>
                 </div>
                 
-                <h3 className="text-4xl md:text-5xl font-display font-bold text-white mb-12 leading-tight">
+                <h3 className="text-4xl md:text-5xl font-display font-bold text-black mb-12 leading-tight">
                   {QUIZ[quizIndex].question}
                 </h3>
 
