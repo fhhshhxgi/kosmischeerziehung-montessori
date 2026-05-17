@@ -164,7 +164,6 @@ const GLOSSARY = [
   { term: 'Große Erzählungen', definition: 'Mythenhafte Erzählungen, die das Interesse des Kindes an den großen Zusammenhängen der Welt wecken.' },
   { term: 'Interdependenz', definition: 'Die wechselseitige Abhängigkeit aller Dinge im Universum voneinander.' },
   { term: 'Kosmische Aufgabe', definition: 'Die Funktion, die jedes Element (lebend oder nicht lebend) im großen Haushalt der Natur erfüllt, um das Gleichgewicht zu halten.' },
-  { term: 'Polarisation der Aufmerksamkeit', definition: 'Der Zustand tiefer, ungestörter Konzentration, in den ein Kind bei einer sinnvollen Tätigkeit versinkt.' },
   { term: 'Vorbereitete Umgebung', definition: 'Ein speziell gestalteter Raum, der dem Kind ermöglicht, autonom und seinen Bedürfnissen entsprechend zu lernen.' },
 ];
 
@@ -233,6 +232,7 @@ const SectionTitle = ({ children, subtitle }: { children: React.ReactNode, subti
     <motion.div
       initial={{ width: 0 }}
       whileInView={{ width: 80 }}
+      viewport={{ once: true }}
       transition={{ duration: 1, ease: "circOut" }}
       className="h-1 bg-brand-gold mx-auto mb-10 rounded-full"
     />
@@ -935,8 +935,8 @@ export default function App() {
             Das Netz des Lebens
           </SectionTitle>
 
-          <div className="grid lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-7 relative aspect-square flex items-center justify-center perspective-1000">
+          <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="md:col-span-1 lg:col-span-7 relative aspect-square flex items-center justify-center perspective-1000 w-full max-w-full lg:max-w-3xl mx-auto min-h-[400px]">
               {/* Interaction diagram */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div 
@@ -969,6 +969,7 @@ export default function App() {
                   key={i}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
                   whileHover={{ scale: 1.1, zIndex: 40 }}
                   animate={selectedConcept?.title === item.title 
                     ? { scale: [1, 1.05, 1], zIndex: 30 } 
@@ -979,18 +980,18 @@ export default function App() {
                     : { duration: 0.3 }
                   }
                   onClick={() => setSelectedConcept(item)}
-                  className={`absolute p-4 rounded-2xl bg-white shadow-lg border border-slate-100 flex items-center gap-3 cursor-pointer group transition-all ${selectedConcept?.title === item.title ? 'ring-2 ring-brand-gold shadow-brand-gold/20' : ''}`}
+                  className={`absolute p-2 md:p-4 rounded-xl md:rounded-2xl bg-white shadow-lg border border-slate-100 flex items-center gap-2 md:gap-3 cursor-pointer group transition-all ${selectedConcept?.title === item.title ? 'ring-2 ring-brand-gold shadow-brand-gold/20' : ''}`}
                   style={{
-                    left: `${50 + 40 * Math.cos((i * 60 * Math.PI) / 180)}%`,
-                    top: `${50 + 40 * Math.sin((i * 60 * Math.PI) / 180)}%`,
+                    left: `${50 + 34 * Math.cos((i * 60 * Math.PI) / 180)}%`,
+                    top: `${50 + 34 * Math.sin((i * 60 * Math.PI) / 180)}%`,
                     x: '-50%',
                     y: '-50%'
                   }}
                 >
-                  <div className={`w-10 h-10 rounded-full bg-brand-beige flex items-center justify-center ${item.color} group-hover:bg-brand-gold group-hover:text-white transition-colors`}>
-                    {React.cloneElement(item.icon as React.ReactElement, { size: 18 })}
+                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-beige flex items-center justify-center ${item.color} group-hover:bg-brand-gold group-hover:text-white transition-colors`}>
+                    {React.cloneElement(item.icon as React.ReactElement, { size: 16 })}
                   </div>
-                  <span className="font-medium text-slate-700">{item.title}</span>
+                  <span className="font-medium text-slate-700 text-xs md:text-sm">{item.title}</span>
                 </motion.div>
               ))}
 
@@ -1026,7 +1027,7 @@ export default function App() {
 
             </div>
 
-            <div className="space-y-6">
+            <div className="md:col-span-1 lg:col-span-5 grid grid-cols-1 gap-6">
               {[
                 { title: 'Interdependenz', desc: 'Nichts existiert für sich allein. Das Wissen wird nicht in Fächern, sondern in Zusammenhängen präsentiert.' },
                 { title: 'Kosmische Aufgabe', desc: 'Jedes Element der Natur (Wind, Wasser, Pflanzen, Tiere) erfüllt eine Aufgabe zum Erhalt des Ganzen. Auch der Mensch.' },
@@ -1038,14 +1039,14 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex gap-6 p-6 rounded-3xl hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-slate-100"
+                  className="flex gap-6 p-6 rounded-3xl hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-slate-100 bg-white/40 backdrop-blur-sm lg:bg-transparent"
                 >
                   <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-brand-gold/10 flex items-center justify-center text-brand-gold">
                     <Sparkles size={20} />
                   </div>
                   <div>
                     <h4 className="text-xl font-bold text-brand-blue mb-2">{point.title}</h4>
-                    <p className="text-slate-600 leading-relaxed">{point.desc}</p>
+                    <p className="text-slate-600 leading-relaxed text-sm md:text-base">{point.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -1398,7 +1399,7 @@ export default function App() {
                   </div>
                 </div>
                 
-                <h3 className="text-4xl md:text-5xl font-display font-bold text-black mb-12 leading-tight">
+                <h3 className="text-4xl md:text-5xl font-display font-bold text-brand-blue mb-12 leading-tight">
                   {QUIZ[quizIndex].question}
                 </h3>
 
@@ -1503,8 +1504,8 @@ export default function App() {
       {/* Glossary Section */}
       <section id="glossary" className="py-32 px-6 md:px-12 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <SectionTitle subtitle="Wichtige Begriffe der Montessori-Pädagogik einfach erklärt.">
-            Das Montessori-ABC
+          <SectionTitle subtitle="Wichtige Begriffe der kosmischen Erziehung einfach erklärt.">
+            Das Glossar
           </SectionTitle>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
